@@ -1,0 +1,169 @@
+<title>بحث مخزون نواعم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+/* Layout: one search box pinned at the top, results as cards; each card = model header + a size × location grid. Phone first. */
+:root{
+  --bg:#f7f5f6; --surface:#ffffff; --fg:#241a1f; --muted:#6e6168; --line:#e4dcdf;
+  --accent:#7a1f3d; --accent-soft:#f3e3e9;
+  --ok:#1f6b3a; --ok-soft:#e1f1e6; --warn:#8a5a0e; --warn-soft:#fbeedb; --bad:#9b2226; --bad-soft:#f9e1e2;
+  --here:#dfeaf6; --here-fg:#1f4c7a;
+  --font:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161114; --surface:#201a1e; --fg:#f1e9ed; --muted:#aa9ca3; --line:#372e33;
+  --accent:#e58aa8; --accent-soft:#3a2230;
+  --ok:#8fd4a6; --ok-soft:#1d3426; --warn:#f0c983; --warn-soft:#3a2d14; --bad:#f29ea1; --bad-soft:#3d1d1f;
+  --here:#1b2f45; --here-fg:#a9cdf2; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161114; --surface:#201a1e; --fg:#f1e9ed; --muted:#aa9ca3; --line:#372e33;
+  --accent:#e58aa8; --accent-soft:#3a2230;
+  --ok:#8fd4a6; --ok-soft:#1d3426; --warn:#f0c983; --warn-soft:#3a2d14; --bad:#f29ea1; --bad-soft:#3d1d1f;
+  --here:#1b2f45; --here-fg:#a9cdf2; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.55;direction:rtl}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
+.asof{font-size:12px;color:var(--muted);margin:0 0 10px;font-variant-numeric:tabular-nums}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;font:inherit;font-size:17px;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+.search input:focus{outline:none;border-color:var(--accent)}
+.search button{font:inherit;font-weight:700;border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;cursor:pointer}
+.search button:focus-visible,.search input:focus-visible,.loc button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.loc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.loc span{font-size:12px;color:var(--muted);align-self:center}
+.loc button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:3px 11px;cursor:pointer}
+.loc button[aria-pressed="true"]{background:var(--here);border-color:var(--here);color:var(--here-fg);font-weight:700}
+.hint{color:var(--muted);font-size:13px;padding-block:18px}
+.count{color:var(--muted);font-size:13px;padding-block:12px 4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline}
+.name{font-weight:700;font-size:16px}
+.key{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 9px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-bad{background:var(--bad-soft);color:var(--bad)}.p-new{background:var(--here);color:var(--here-fg)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:13px;margin-top:4px;font-variant-numeric:tabular-nums}
+.meta b{color:var(--fg)}
+.sizes{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.size{border-top:1px solid var(--line);padding-top:8px}
+.srow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.sz{font-weight:700;min-width:64px;font-variant-numeric:tabular-nums}
+.sz small{font-weight:400;color:var(--muted);font-size:11px;display:block}
+.tot{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:13px;border-radius:6px;padding:2px 8px;background:var(--accent-soft);color:var(--fg);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip.here{background:var(--here);color:var(--here-fg);font-weight:700}
+.chip.tr{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+.none{color:var(--bad);font-size:13px}
+.gh{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline;padding-block:12px 4px}
+.gh h2{font-size:17px;margin:0;color:var(--accent)}
+.gh .lv{font-size:12px;color:var(--muted)}
+.gap{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;border-top:1px solid var(--line);padding-block:7px}
+.gap .sz{min-width:58px}
+.gap .sold{font-size:12px;color:var(--muted);min-width:64px}
+.tag{font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.t-come{background:var(--here);color:var(--here-fg)}.t-ask{background:var(--accent-soft);color:var(--fg);font-weight:500}.t-mfg{background:var(--warn-soft);color:var(--warn)}.t-none{background:var(--bad-soft);color:var(--bad)}
+.gfilter{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
+.gfilter button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:2px 10px;cursor:pointer}
+.gfilter button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.foot{color:var(--muted);font-size:12px;margin-top:28px;line-height:1.7}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <h1>بحث مخزون نواعم</h1>
+    <p class="asof" id="asof" style="color:var(--bad);font-weight:700">هذي معاينة بس. اضغط زر المشاركة (المربع والسهم) واختر «فتح في Safari» أو «Chrome» عشان يشتغل البحث.</p>
+    <form class="search" id="f">
+      <input id="q" type="search" inputmode="search" placeholder="الباركود أو اسم الموديل" autocomplete="off" autofocus>
+      <button type="submit">بحث</button>
+    </form>
+    <div class="loc" id="loc"><span>الفرع:</span></div>
+  </div>
+  <div id="out"><p class="hint">اكتب الباركود كامل (مثل 011015-389554) أو جزء من الاسم (مثل الفيروز). أو اختر فرعك بدون كتابة عشان تشوف نواقصه.</p></div>
+  <p class="foot">الأرقام من آخر تقرير مخزون مُحمّل في النظام، والفرع يتأكد من الرف قبل تأكيد الطلب. «في الطريق» = خرج بتحويل وما انستلم بعد. الموديل المسحوب أو الخارج من المصفوفة لا يُباع أونلاين. «نواقص الفرع» = مقاسات باعها الفرع في الفترة وما عنده منها الآن.</p>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let DATA=null, HERE='';
+const PILL={'نشط':'p-ok','جديد':'p-new','يخرج من المصفوفة':'p-warn','مسحوب: جودة':'p-bad','مسحوب: الإدارة':'p-bad'};
+const norm=t=>String(t||'').toLowerCase().replace(/[إأآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ْ]/g,'').replace(/\s+/g,' ').trim();
+const fa=n=>Number(n).toLocaleString('ar-SA-u-nu-latn');
+function fmtDate(s){try{return new Date(s+'T12:00:00').toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'long',year:'numeric'})}catch(e){return s}}
+async function load(){
+  try{
+    const r=await fetch('data.json',{cache:'no-store'}); DATA=await r.json();
+    $('#asof').textContent='مخزون بتاريخ '+fmtDate(DATA.asof)+' · حُدّث '+fmtDate(DATA.built)+' · '+fa(DATA.models.length)+' موديل';
+    const loc=$('#loc');
+    for(const l of DATA.locs){ if(l==='المستودع')continue; const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
+      b.onclick=()=>{HERE=HERE===l?'':l;loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));render()};loc.appendChild(b)}
+    try{const q=localStorage.getItem('nq');if(q)$('#q').value=q}catch(e){}
+    render();
+  }catch(e){$('#asof').textContent='تعذّر تحميل البيانات. أعد فتح الرابط.'}
+}
+function find(q){
+  q=norm(q); if(!q)return[];
+  const digits=q.replace(/\s/g,'');
+  if(/^[\d-]{6,}$/.test(digits)){
+    const key=digits.length===13?digits.slice(0,-2):digits;
+    const hit=DATA.models.filter(m=>m.key===key||m.key.startsWith(digits)||m.sizes.some(z=>z.bc===digits));
+    if(hit.length)return hit.map(m=>({m,size:digits.length===13?digits.slice(-2):null}));
+  }
+  const words=q.split(' ');
+  return DATA.models.filter(m=>{const n=norm(m.name);return words.every(w=>n.includes(w))}).sort((a,b)=>b.sold-a.sold).slice(0,30).map(m=>({m,size:null}));
+}
+function render(){
+  if(!DATA)return; const q=$('#q').value; try{localStorage.setItem('nq',q)}catch(e){}
+  const hits=find(q); const out=$('#out');
+  if(!q.trim()){ if(HERE&&DATA.gaps&&DATA.gaps[HERE]){renderGaps(HERE);return} out.innerHTML='<p class="hint">اكتب الباركود كامل (مثل 011015-389554) أو جزء من الاسم (مثل الفيروز). أو اختر فرعك بدون كتابة عشان تشوف نواقصه.</p>';return}
+  if(!hits.length){out.innerHTML='<p class="hint">ما لقيت موديل بهذا الباركود أو الاسم. جرّب جزء أقصر من الاسم، أو تأكد من الباركود.</p>';return}
+  let h=`<p class="count">${fa(hits.length)} موديل</p>`;
+  for(const {m,size} of hits){
+    const pill=PILL[m.status]||'p-ok';
+    h+=`<div class="card"><div class="head"><div><span class="name">${m.name}</span> <span class="key">${m.key}</span></div><span class="pill ${pill}">${m.status}</span></div>
+    <div class="meta"><span>السعر الحالي <b>${fa(m.sell)}</b></span>${m.new?`<span>السعر الجديد من 1 نوفمبر <b>${fa(m.new)}</b></span>`:''}<span>باع في 70 يوم <b>${fa(m.sold)}</b></span></div><div class="sizes">`;
+    const sizes=size?[...m.sizes.filter(z=>z.size===size),...m.sizes.filter(z=>z.size!==size)]:m.sizes;
+    for(const z of sizes){
+      const tot=Object.values(z.stock).reduce((a,b)=>a+b,0);
+      const trt=Object.values(z.transit).reduce((a,b)=>a+b,0);
+      const hereQ=HERE?(z.stock[HERE]||0):null; const hereT=HERE?(z.transit[HERE]||0):0;
+      let chips='';
+      const order=[...DATA.locs].sort((a,b)=>(b===HERE)-(a===HERE));
+      for(const l of order){const n=z.stock[l];if(n)chips+=`<span class="chip${l===HERE?' here':''}">${l} ${fa(n)}</span>`}
+      for(const l of order){const n=z.transit[l];if(n)chips+=`<span class="chip tr">في الطريق لـ${l} ${fa(n)}</span>`}
+      const sum=tot?`${fa(tot)} قطعة`+(trt?` + ${fa(trt)} في الطريق`:''):(trt?`${fa(trt)} في الطريق`:'');
+      h+=`<div class="size"${size&&z.size===size?' style="background:var(--accent-soft);border-radius:8px;padding:8px;border-top:none"':''}><div class="srow"><span class="sz">مقاس ${z.size}${HERE?`<small>${hereQ?`عند ${HERE}: ${fa(hereQ)}`:hereT?`جاي لـ${HERE}: ${fa(hereT)}`:`ما عند ${HERE}`}</small>`:''}</span>${tot||trt?`<span class="tot">${sum}</span><span class="chips">${chips}</span>`:'<span class="none">خالص في كل الشركة</span>'}</div></div>`;
+    }
+    h+='</div></div>';
+  }
+  out.innerHTML=h;
+}
+let GF='all';
+function renderGaps(b){
+  const out=$('#out'); const g=DATA.gaps[b]||[]; const lv=DATA.leaving&&DATA.leaving[b]||{};
+  const cls=x=>Object.keys(x.coming).length||x.transit?'come':x.total>0?'ask':x.mfg?'mfg':'none';
+  const n={all:g.length,come:0,ask:0,mfg:0,none:0}; g.forEach(x=>n[cls(x)]++);
+  const lvTxt=Object.entries(lv).sort((a,b)=>b[1]-a[1]).map(([d,q])=>`${d} ${fa(q)}`).join(' · ');
+  let h=`<div class="gh"><h2>نواقص ${b}: ${fa(g.length)} مقاس</h2><span class="lv">${lvTxt?`يطلع من ${b} هذا الأسبوع: ${lvTxt}`:''}</span></div>`;
+  h+=`<div class="gfilter">${[['all','الكل'],['come','جاي لك'],['ask','اطلبه من فرع'],['mfg','في التصنيع'],['none','خالص بالشركة']].map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${GF===k}">${l} ${fa(n[k])}</button>`).join('')}</div>`;
+  const list=GF==='all'?g:g.filter(x=>cls(x)===GF);
+  if(!list.length){h+='<p class="hint">ما فيه شي في هذي الفئة.</p>';out.innerHTML=h;bindF(b);return}
+  let cur=null;
+  for(const x of list){
+    if(x.key!==cur){ if(cur!==null)h+='</div>'; cur=x.key; const m=DATA.models.find(m=>m.key===x.key); h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div>${m&&m.status==='جديد'?'<span class="pill p-new">جديد</span>':''}</div>`; }
+    const c=cls(x); let tag='';
+    if(c==='come'){const parts=Object.entries(x.coming).map(([s,q])=>`${fa(q)} من ${s}`); if(x.transit)parts.push(`${fa(x.transit)} في الطريق`); tag=`<span class="tag t-come">جاي لك: ${parts.join('، ')}</span>`}
+    else if(c==='ask'){tag=`<span class="tag t-ask">اطلبه من: ${Object.entries(x.where).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([w,q])=>`${w} ${fa(q)}`).join('، ')}</span>`}
+    else if(c==='mfg'){tag=`<span class="tag t-mfg">خالص بالشركة · في أمر التصنيع ${fa(x.mfg)}</span>`}
+    else tag='<span class="tag t-none">خالص بالشركة</span>';
+    h+=`<div class="gap"><span class="sz"><b>${x.size==='—'?'بدون مقاس':'مقاس '+x.size}</b></span><span class="sold">بعت ${fa(x.sold)} في ${DATA.period||70} يوم</span>${tag}</div>`;
+  }
+  if(cur!==null)h+='</div>';
+  out.innerHTML=h; bindF(b);
+}
+function bindF(b){document.querySelectorAll('.gfilter button').forEach(x=>x.onclick=()=>{GF=x.dataset.f;renderGaps(b)})}
+$('#f').addEventListener('submit',e=>{e.preventDefault();render()});
+$('#q').addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(render,250)});
+load();
+</script>
