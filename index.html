@@ -67,6 +67,13 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
 .gfilter{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
 .gfilter button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:2px 10px;cursor:pointer}
 .gfilter button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ov{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.ov button{font:inherit;text-align:right;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;color:var(--fg);display:flex;flex-direction:column;gap:4px}
+.ov button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ov .bn{font-weight:700;font-size:16px}
+.ov .big{font-size:26px;font-weight:700;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
+.ov .sm{font-size:12px;color:var(--muted);line-height:1.5}
+.ov .wh{color:var(--ok);font-weight:700}
 .foot{color:var(--muted);font-size:12px;margin-top:28px;line-height:1.7}
 </style>
 
@@ -97,7 +104,7 @@ async function load(){
     $('#asof').textContent='مخزون بتاريخ '+fmtDate(DATA.asof)+' · حُدّث '+fmtDate(DATA.built)+' · '+fa(DATA.models.length)+' موديل';
     const loc=$('#loc');
     for(const l of DATA.locs){ if(l==='المستودع')continue; const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
-      b.onclick=()=>{HERE=HERE===l?'':l;loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));render()};loc.appendChild(b)}
+      b.onclick=()=>{HERE=HERE===l?'':l;GF='all';GC='all';loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));render()};loc.appendChild(b)}
     try{const q=localStorage.getItem('nq');if(q)$('#q').value=q}catch(e){}
     render();
   }catch(e){$('#asof').textContent='تعذّر تحميل البيانات. أعد فتح الرابط.'}
@@ -116,7 +123,7 @@ function find(q){
 function render(){
   if(!DATA)return; const q=$('#q').value; try{localStorage.setItem('nq',q)}catch(e){}
   const hits=find(q); const out=$('#out');
-  if(!q.trim()){ if(HERE&&DATA.gaps&&DATA.gaps[HERE]){renderGaps(HERE);return} out.innerHTML='<p class="hint">اكتب الباركود كامل (مثل 011015-389554) أو جزء من الاسم (مثل الفيروز). أو اختر فرعك بدون كتابة عشان تشوف نواقصه.</p>';return}
+  if(!q.trim()){ if(HERE&&DATA.gaps&&DATA.gaps[HERE]){renderGaps(HERE);return} renderOverview();return}
   if(!hits.length){out.innerHTML='<p class="hint">ما لقيت موديل بهذا الباركود أو الاسم. جرّب جزء أقصر من الاسم، أو تأكد من الباركود.</p>';return}
   let h=`<p class="count">${fa(hits.length)} موديل</p>`;
   for(const {m,size} of hits){
@@ -139,22 +146,35 @@ function render(){
   }
   out.innerHTML=h;
 }
-let GF='all';
+function pickBranch(l){HERE=l;document.querySelectorAll('#loc button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));GF='all';GC='all';render();window.scrollTo(0,0)}
+function renderOverview(){
+  const out=$('#out'); const s=DATA.summary||{};
+  let h='<p class="hint">اكتب باركود أو اسم موديل للبحث، أو اضغط فرع عشان تشوف نواقصه وقرار التعبئة.</p><div class="ov">';
+  for(const b of DATA.locs){ if(b==='المستودع'||!s[b])continue; const x=s[b];
+    const cats=Object.entries(x.bycat).map(([c,n])=>`${c} ${fa(n)}`).join(' · ');
+    h+=`<button type="button" data-b="${b}"><span class="bn">${b}</span><span class="big">${fa(x.total)}</span><span class="sm">مقاس ناقص · ${cats}</span><span class="sm"><span class="wh">يتعبّى من المستودع الآن: ${fa(x.warehouse)}</span><br>جاي له: ${fa(x.coming)} · خالص بالشركة: ${fa(x.none)}<br>يطلع منه: ${fa(x.leaving)} قطعة</span></button>`}
+  h+='</div>'; out.innerHTML=h;
+  out.querySelectorAll('.ov button').forEach(x=>x.onclick=()=>pickBranch(x.dataset.b));
+}
+let GF='all', GC='all';
 function renderGaps(b){
   const out=$('#out'); const g=DATA.gaps[b]||[]; const lv=DATA.leaving&&DATA.leaving[b]||{};
   const cls=x=>Object.keys(x.coming).length||x.transit?'come':x.total>0?'ask':x.mfg?'mfg':'none';
-  const n={all:g.length,come:0,ask:0,mfg:0,none:0}; g.forEach(x=>n[cls(x)]++);
+  const wh=x=>x.where['المستودع']>0;
+  const n={all:g.length,wh:g.filter(wh).length,come:0,ask:0,mfg:0,none:0}; g.forEach(x=>n[cls(x)]++);
+  const cats={}; g.forEach(x=>{cats[x.cat]=(cats[x.cat]||0)+1});
   const lvTxt=Object.entries(lv).sort((a,b)=>b[1]-a[1]).map(([d,q])=>`${d} ${fa(q)}`).join(' · ');
   let h=`<div class="gh"><h2>نواقص ${b}: ${fa(g.length)} مقاس</h2><span class="lv">${lvTxt?`يطلع من ${b} هذا الأسبوع: ${lvTxt}`:''}</span></div>`;
-  h+=`<div class="gfilter">${[['all','الكل'],['come','جاي لك'],['ask','اطلبه من فرع'],['mfg','في التصنيع'],['none','خالص بالشركة']].map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${GF===k}">${l} ${fa(n[k])}</button>`).join('')}</div>`;
-  const list=GF==='all'?g:g.filter(x=>cls(x)===GF);
+  h+=`<div class="gfilter">${[['all','الكل'],['wh','يتعبّى من المستودع الآن'],['come','جاي لك'],['ask','اطلبه من فرع'],['mfg','في التصنيع'],['none','خالص بالشركة']].map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${GF===k}">${l} ${fa(n[k])}</button>`).join('')}</div>`;
+  h+=`<div class="gfilter">${[['all','كل الأصناف'],...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,q])=>[c,c+' '+fa(q)])].map(([k,l])=>`<button type="button" data-c="${k}" aria-pressed="${GC===k}">${l}</button>`).join('')}</div>`;
+  const list=g.filter(x=>(GF==='all'||(GF==='wh'?wh(x):cls(x)===GF))&&(GC==='all'||x.cat===GC));
   if(!list.length){h+='<p class="hint">ما فيه شي في هذي الفئة.</p>';out.innerHTML=h;bindF(b);return}
   let cur=null;
   for(const x of list){
     if(x.key!==cur){ if(cur!==null)h+='</div>'; cur=x.key; const m=DATA.models.find(m=>m.key===x.key); h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div>${m&&m.status==='جديد'?'<span class="pill p-new">جديد</span>':''}</div>`; }
     const c=cls(x); let tag='';
     if(c==='come'){const parts=Object.entries(x.coming).map(([s,q])=>`${fa(q)} من ${s}`); if(x.transit)parts.push(`${fa(x.transit)} في الطريق`); tag=`<span class="tag t-come">جاي لك: ${parts.join('، ')}</span>`}
-    else if(c==='ask'){tag=`<span class="tag t-ask">اطلبه من: ${Object.entries(x.where).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([w,q])=>`${w} ${fa(q)}`).join('، ')}</span>`}
+    else if(c==='ask'){const ws=Object.entries(x.where).sort((a,b)=>(b[0]==='المستودع')-(a[0]==='المستودع')||b[1]-a[1]).slice(0,4); tag=`<span class="tag ${wh(x)?'t-come':'t-ask'}">${wh(x)?'يتعبّى من المستودع':'اطلبه من'}: ${ws.map(([w,q])=>`${w} ${fa(q)}`).join('، ')}</span>`}
     else if(c==='mfg'){tag=`<span class="tag t-mfg">خالص بالشركة · في أمر التصنيع ${fa(x.mfg)}</span>`}
     else tag='<span class="tag t-none">خالص بالشركة</span>';
     h+=`<div class="gap"><span class="sz"><b>${x.size==='—'?'بدون مقاس':'مقاس '+x.size}</b></span><span class="sold">بعت ${fa(x.sold)} في ${DATA.period||70} يوم</span>${tag}</div>`;
@@ -162,7 +182,7 @@ function renderGaps(b){
   if(cur!==null)h+='</div>';
   out.innerHTML=h; bindF(b);
 }
-function bindF(b){document.querySelectorAll('.gfilter button').forEach(x=>x.onclick=()=>{GF=x.dataset.f;renderGaps(b)})}
+function bindF(b){document.querySelectorAll('.gfilter button[data-f]').forEach(x=>x.onclick=()=>{GF=x.dataset.f;renderGaps(b)});document.querySelectorAll('.gfilter button[data-c]').forEach(x=>x.onclick=()=>{GC=x.dataset.c;renderGaps(b)})}
 $('#f').addEventListener('submit',e=>{e.preventDefault();render()});
 $('#q').addEventListener('input',()=>{clearTimeout(window._t);window._t=setTimeout(render,250)});
 load();
