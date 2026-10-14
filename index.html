@@ -82,7 +82,7 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
 .ov .big{font-size:26px;font-weight:700;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
 .ov .sm{font-size:12px;color:var(--muted);line-height:1.5}
 .ov .wh{color:var(--ok);font-weight:700}
-.nav{display:flex;gap:6px;margin:6px 0 8px}
+.nav{display:flex;gap:6px;margin:6px 0 8px;flex-wrap:wrap}
 .nav button{font:inherit;font-weight:700;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:6px 14px;cursor:pointer}
 .nav button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .nav button:focus-visible,.tiles button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -102,13 +102,39 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
 .more{display:block;margin:14px auto 0;font:inherit;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:8px;padding:8px 18px;cursor:pointer}
 .lnk{font:inherit;font-size:12px;border:none;background:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
 .foot{color:var(--muted);font-size:12px;margin-top:28px;line-height:1.7}
+.sub{display:flex;gap:6px;margin:10px 0 2px}
+.sub button{font:inherit;font-size:13px;font-weight:700;border:none;border-bottom:2px solid transparent;background:none;color:var(--muted);padding:6px 4px;cursor:pointer}
+.sub button[aria-pressed="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.rt{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;font-variant-numeric:tabular-nums}
+.rt th,.rt td{padding:5px 3px;text-align:center;border-top:1px solid var(--line);vertical-align:top}
+.rt th{font-weight:700;color:var(--muted);font-size:12px}
+.rt td:first-child,.rt th:first-child{text-align:right;font-weight:700;white-space:nowrap}
+.rt .c{display:block;border-radius:6px;padding:3px 2px;font-weight:700;line-height:1.3}
+.rt .c small{display:block;font-weight:400;font-size:10.5px;opacity:.85}
+.v-full{background:var(--ok-soft);color:var(--ok)}.v-lim{background:var(--warn-soft);color:var(--warn)}.v-block{background:var(--bad-soft);color:var(--bad)}.v-none{color:var(--muted)}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.calc h3{font-size:15px;margin:0 0 6px;color:var(--accent)}
+.calc .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.calc label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.calc input{font:inherit;width:64px;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);text-align:center}
+.calc input.wide{width:auto;flex:1;min-width:160px;text-align:right}
+.calc button{font:inherit;font-weight:700;border:none;background:var(--accent);color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer}
+.calc button.sec{background:var(--accent-soft);color:var(--fg)}
+.rule{font-size:13px;color:var(--muted);line-height:1.7;margin-top:8px}
+.rule b{color:var(--fg)}
+.route{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline;margin-top:16px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.route h3{font-size:15px;margin:0;color:var(--accent)}
+.route span{font-size:12px;color:var(--muted)}
+.mv{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;border-top:1px solid var(--line);padding-block:6px}
+.mv .q{font-weight:700;background:var(--here);color:var(--here-fg);border-radius:6px;padding:1px 9px;white-space:nowrap}
+.mv .w{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <h1>بحث مخزون نواعم</h1>
-    <div class="nav" role="tablist"><button type="button" id="v-search" aria-pressed="true">بحث والفروع</button><button type="button" id="v-models" aria-pressed="false">الموديلات والقرارات</button></div>
+    <div class="nav" role="tablist"><button type="button" id="v-search" aria-pressed="true">بحث والفروع</button><button type="button" id="v-models" aria-pressed="false">الموديلات والقرارات</button><button type="button" id="v-moves" aria-pressed="false">تحريك المقاسات</button></div>
     <p class="asof" id="asof" style="color:var(--bad);font-weight:700">هذي معاينة بس. اضغط زر المشاركة (المربع والسهم) واختر «فتح في Safari» أو «Chrome» عشان يشتغل البحث.</p>
     <form class="search" id="f">
       <input id="q" type="search" inputmode="search" placeholder="الباركود أو اسم الموديل" autocomplete="off" autofocus>
@@ -123,8 +149,9 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
     <div class="mtools"><input id="mq" type="search" placeholder="فلترة بالاسم أو الباركود" autocomplete="off"><select id="ms"><option value="stock">الأكثر مخزوناً</option><option value="sold">الأكثر بيعاً (قطع)</option><option value="rev">الأعلى قيمة مبيعات</option><option value="br">الأكثر في الفروع</option><option value="cover">الأقل تغطية</option><option value="ret">الأكثر راجع للمصنع</option></select></div>
     <div id="mout"></div>
   </div>
+  <div id="mvv" hidden></div>
   <div id="out"><p class="hint">اكتب الباركود كامل (مثل 011015-389554) أو جزء من الاسم (مثل الفيروز). أو اختر فرعك بدون كتابة عشان تشوف نواقصه.</p></div>
-  <p class="foot">الأرقام من آخر تقرير مخزون مُحمّل في النظام، والفرع يتأكد من الرف قبل تأكيد الطلب. «في الطريق» = خرج بتحويل وما انستلم بعد. الموديل المسحوب أو الخارج من المصفوفة لا يُباع أونلاين. «نواقص الفرع» = مقاسات باعها الفرع في الفترة وما عنده منها الآن. قرارات الموديلات من المحرك: يخرج من المصفوفة = ما يبيع قطعة في الشهر في أي فرع، متضخم = مخزونه يكفي أكثر من 180 يوم. «بعناه» = ما بقي منه قطعة لا في الفروع ولا في المستودع. «★ الأكثر مبيعاً» = ضمن أعلى 40 موديل بقيمة المبيعات في الفترة في كل الشركة، و«★ أونلاين» = ضمن أعلى 20 في المتجر الإلكتروني. «على سلة» من آخر تصدير لمنتجات سلة: معروض أو مخفي، و«مو على سلة» = ما له صفحة في المتجر ويحتاج تصوير وإضافة.</p>
+  <p class="foot">الأرقام من آخر تقرير مخزون مُحمّل في النظام، والفرع يتأكد من الرف قبل تأكيد الطلب. «في الطريق» = خرج بتحويل وما انستلم بعد. الموديل المسحوب أو الخارج من المصفوفة لا يُباع أونلاين. «نواقص الفرع» = مقاسات باعها الفرع في الفترة وما عنده منها الآن. قرارات الموديلات من المحرك: يخرج من المصفوفة = ما يبيع قطعة في الشهر في أي فرع، متضخم = مخزونه يكفي أكثر من 180 يوم. «بعناه» = ما بقي منه قطعة لا في الفروع ولا في المستودع. «★ الأكثر مبيعاً» = ضمن أعلى 40 موديل بقيمة المبيعات في الفترة في كل الشركة، و«★ أونلاين» = ضمن أعلى 20 في المتجر الإلكتروني. «على سلة» من آخر تصدير لمنتجات سلة: معروض أو مخفي، و«مو على سلة» = ما له صفحة في المتجر ويحتاج تصوير وإضافة. «تحريك المقاسات» = أمر التحويل هذا الأسبوع: الفرع اللي ما باع الموديل أو عنده من المقاس أكثر من حاجته يعطيه للفرع اللي يبيعه. «قاعدة توزيع المقاسات» عند المستودع: الفرع يستقبل المقاس حسب مبيعاته من هذا المقاس ومخزونه منه.</p>
 </div>
 
 <script>
@@ -140,9 +167,9 @@ async function load(){
     $('#asof').textContent='مخزون بتاريخ '+fmtDate(DATA.asof)+' · حُدّث '+fmtDate(DATA.built)+' · '+fa(DATA.models.length)+' موديل';
     const loc=$('#loc');
     for(const l of [...DATA.locs.filter(l=>l!=='المستودع'),'المستودع']){ const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed','false');
-      b.onclick=()=>{HERE=HERE===l?'':l;GF='all';GC='all';loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));render()};loc.appendChild(b)}
+      b.onclick=()=>{HERE=HERE===l?'':l;GF='all';GC='all';WB='all';WF='all';MVD='all';loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.textContent===HERE));if(VIEW==='moves')renderMoves();else render()};loc.appendChild(b)}
     try{const q=localStorage.getItem('nq');if(q)$('#q').value=q}catch(e){}
-    render(); try{if(localStorage.getItem('nv')==='models')setView('models')}catch(e){}
+    render(); try{const v=localStorage.getItem('nv');if(v==='models'||v==='moves')setView(v)}catch(e){}
   }catch(e){$('#asof').textContent='تعذّر تحميل البيانات. أعد فتح الرابط.'}
 }
 function find(q){
@@ -211,10 +238,12 @@ function renderWarehouse(){
   const out=$('#out'); const w=DATA.summary&&DATA.summary['المستودع'];
   if(!w){out.innerHTML='<p class="hint">ما فيه بيانات للمستودع في هذا التحديث.</p>';return}
   const stores=DATA.locs.filter(l=>l!=='المستودع');
+  const sub=`<div class="sub"><button type="button" data-wt="fill" aria-pressed="${WT==='fill'}">نواقص الفروع</button><button type="button" data-wt="rule" aria-pressed="${WT==='rule'}">قاعدة توزيع المقاسات</button></div>`;
+  if(WT==='rule'){renderRule(out,sub);return}
   const rows=[]; for(const b of stores)for(const x of (DATA.gaps[b]||[]))if(x.where['المستودع']>0)rows.push({b,x,ord:x.coming['المستودع']||0});
   const lv=Object.entries(w.leaving).sort((a,b)=>b[1]-a[1]).map(([d,q])=>`${d} ${fa(q)}`).join(' · ');
   const inc=Object.entries(w.incoming).sort((a,b)=>b[1]-a[1]).map(([d,q])=>`${d} ${fa(q)}`).join(' · ');
-  let h=`<div class="gh"><h2>المستودع: ${fa(w.pcs)} قطعة · ${fa(w.models)} موديل</h2></div>`;
+  let h=`<div class="gh"><h2>المستودع: ${fa(w.pcs)} قطعة · ${fa(w.models)} موديل</h2></div>`+sub;
   if(lv||inc)h+=`<p class="hint" style="padding-block:2px 8px">${lv?`يطلع منه هذا الأسبوع حسب أمر التحويل: ${lv}.`:''}${inc?`<br>راجع له من الفروع: ${inc}.`:''}</p>`;
   h+=`<div class="gh"><h2 style="font-size:15px">نواقص الفروع اللي يعبّيها المستودع الآن: ${fa(rows.length)} مقاس</h2></div>`;
   const nb={all:rows.length}; stores.forEach(b=>{nb[b]=rows.filter(r=>r.b===b).length});
@@ -233,10 +262,120 @@ function renderWarehouse(){
   out.innerHTML=h;
   out.querySelectorAll('button[data-wb]').forEach(x=>x.onclick=()=>{WB=x.dataset.wb;renderWarehouse()});
   out.querySelectorAll('button[data-wf]').forEach(x=>x.onclick=()=>{WF=x.dataset.wf;renderWarehouse()});
+  bindWT(out);
+}
+let WT='fill';
+function bindWT(out){out.querySelectorAll('button[data-wt]').forEach(x=>x.onclick=()=>{WT=x.dataset.wt;renderWarehouse();window.scrollTo(0,0)})}
+// ---- the size rule: a branch receives a size of a family only while its own stock of that size (all models) covers at most FULL days of its sales;
+//      between FULL and BLOCK days one piece per model at most; above BLOCK, or a size the branch never sold, nothing until it thins out.
+let RF='عباية', TH={full:120,block:180}, QTY={};
+try{const x=JSON.parse(localStorage.getItem('nth')||'null');if(x&&x.full>0&&x.block>x.full)TH=x}catch(e){}
+function verdict(c,per){
+  const rate=c.sold/per, have=c.stock+c.transit, sh=`${fa(c.sold)}/${fa(have)}`;
+  if(c.sold===0)return have>0?{v:'block',t:'موقوف',s:'ما باع · '+sh}:{v:'lim',t:'تجربة',s:'ما باع · 0'};
+  const cov=Math.round(have/rate);
+  return cov<=TH.full?{v:'full',t:`${fa(cov)} يوم`,s:sh,cov,rate}
+    :cov<=TH.block?{v:'lim',t:`${fa(cov)} يوم`,s:sh,cov,rate}
+    :{v:'block',t:'موقوف',s:`${fa(cov)} يوم · ${sh}`,cov,rate};
+}
+function allocate(z,Q,R,stores){
+  // Q pieces of size z: full branches share by their sales rate; limited branches get one at most; blocked get none; the rest stays in the warehouse
+  const per=DATA.period||70; const info=stores.map(b=>({b,...verdict(R.br[b][z],per),rate:R.br[b][z].sold/per}));
+  const out={}; stores.forEach(b=>out[b]=0); let left=Q;
+  const F=info.filter(i=>i.v==='full'), Lm=info.filter(i=>i.v==='lim').sort((a,b)=>b.rate-a.rate);
+  const W=F.reduce((a,i)=>a+i.rate,0);
+  if(F.length&&W>0){
+    // limited branches get one each only when there is enough for every branch to get at least one; the rest is shared by sales rate
+    let Qf=Q; if(Lm.length&&Q>=F.length+Lm.length){Lm.forEach(l=>{out[l.b]=1});Qf=Q-Lm.length}
+    const base=F.map(i=>({b:i.b,x:Qf*i.rate/W})); let used=0;
+    base.forEach(i=>{i.n=Math.floor(i.x);used+=i.n});
+    base.sort((a,b)=>(b.x-b.n)-(a.x-a.n)); let r=Qf-used;
+    for(const i of base){if(r<=0)break;i.n++;r--}
+    base.forEach(i=>{out[i.b]=i.n}); left=0;
+  }else{for(const l of Lm){if(left<=0)break;out[l.b]=1;left--}}
+  return {out,left};
+}
+function renderRule(out,sub){
+  const R=DATA.szrule&&DATA.szrule[RF]; const fams=Object.keys(DATA.szrule||{}); const per=DATA.period||70;
+  const w=DATA.summary['المستودع']; const stores=DATA.locs.filter(l=>l!=='المستودع');
+  let h=`<div class="gh"><h2>المستودع: ${fa(w.pcs)} قطعة · ${fa(w.models)} موديل</h2></div>`+sub;
+  if(!R){out.innerHTML=h+'<p class="hint">ما فيه بيانات مقاسات في هذا التحديث.</p>';bindWT(out);return}
+  h+=`<div class="gfilter">${fams.map(f=>`<button type="button" data-rf="${f}" aria-pressed="${RF===f}">${f}</button>`).join('')}</div>`;
+  h+=`<p class="rule">القاعدة: الفرع يستقبل المقاس فقط إذا كان مخزونه من هذا المقاس (كل موديلات ${RF}) يكفي <b>${fa(TH.full)} يوم</b> أو أقل من مبيعاته. بين ${fa(TH.full)} و<b>${fa(TH.block)} يوم</b>: قطعة واحدة من الموديل كحد أقصى. فوق ${fa(TH.block)} يوم أو ما باع المقاس أصلاً: <b>موقوف</b> حتى يخف مخزونه. الحساب على ${fa(per)} يوم مبيعات، والمخزون = اللي على الرف + اللي في الطريق، من الموديلات الباقية فقط (المسحوب والخارج ما يُحسب).</p>`;
+  h+=`<div class="calc"><div class="row"><label>كامل حتى <input type="number" id="th-full" min="10" value="${TH.full}"> يوم</label><label>موقوف فوق <input type="number" id="th-block" min="20" value="${TH.block}"> يوم</label><button type="button" class="sec" id="th-go">طبّق</button></div></div>`;
+  // company row: where the sizes sell and where the stock sits
+  h+=`<table class="rt"><tr><th>${RF} · كل الشركة</th>${R.sizes.map(z=>`<th>${z}</th>`).join('')}</tr>`;
+  h+=`<tr><td>حصة المقاس من المبيعات</td>${R.sizes.map(z=>`<td>${Math.round(R.share[z]*100)}%</td>`).join('')}</tr>`;
+  h+=`<tr><td>حصته من المخزون الباقي</td>${R.sizes.map(z=>`<td class="${R.stock_share[z]>R.share[z]*1.25?'v-block':''}">${Math.round(R.stock_share[z]*100)}%</td>`).join('')}</tr>`;
+  h+=`<tr><td>بالمستودع الآن</td>${R.sizes.map(z=>`<td>${fa(R.wh[z])}</td>`).join('')}</tr>`;
+  h+=`<tr><td>للإنتاج: من كل 100 قطعة</td>${R.sizes.map(z=>`<td><b>${Math.round(R.share[z]*100)}</b></td>`).join('')}</tr></table>`;
+  if(R.rare)h+=`<p class="hint" style="padding-block:4px">المقاسات النادرة (أقل من 3% من المبيعات) ما تدخل القاعدة: تُرسل بطلب الفرع فقط. باعت ${fa(R.rare)} قطعة في الفترة.</p>`;
+  // branch × size matrix
+  h+=`<div class="gfilter" style="margin-top:14px"><span class="tag v-full">يستقبل حصته</span><span class="tag v-lim">قطعة واحدة فقط</span><span class="tag v-block">موقوف حتى يخف</span></div><p class="hint" style="padding-block:2px 0">في كل خانة: كم يوم يكفي مخزون الفرع من هذا المقاس، وتحتها باع/عنده في ${fa(per)} يوم.</p>`;
+  h+=`<table class="rt"><tr><th>الفرع</th>${R.sizes.map(z=>`<th>${z}</th>`).join('')}</tr>`;
+  for(const b of stores){
+    h+=`<tr><td>${b}</td>`+R.sizes.map(z=>{const v=verdict(R.br[b][z],per);return `<td><span class="c v-${v.v}">${v.t}<small>${v.s}</small></span></td>`}).join('')+'</tr>';
+  }
+  h+='</table>';
+  // calculator
+  const sizes=R.sizes;
+  h+=`<div class="calc"><h3>وزّع موديل جديد</h3><div class="row"><input class="wide" id="c-m" type="search" placeholder="باركود أو اسم الموديل (اختياري: يجيب كمياته من المستودع)" autocomplete="off"><button type="button" class="sec" id="c-get">جيب من المستودع</button></div>
+  <div class="row"><label>إجمالي القطع <input type="number" id="c-tot" min="0" placeholder="24"></label><button type="button" class="sec" id="c-split">قسّم حسب حصة المقاس</button></div>
+  <div class="row">${sizes.map(z=>`<label>${z} <input type="number" min="0" id="c-${z}" value="${QTY[z]||0}"></label>`).join('')}<button type="button" id="c-go">وزّع</button></div><div id="c-out"></div></div>`;
+  out.innerHTML=h; bindWT(out);
+  out.querySelectorAll('button[data-rf]').forEach(x=>x.onclick=()=>{RF=x.dataset.rf;QTY={};renderWarehouse()});
+  $('#th-go').onclick=()=>{const f=+$('#th-full').value,b=+$('#th-block').value;if(f>0&&b>f){TH={full:f,block:b};try{localStorage.setItem('nth',JSON.stringify(TH))}catch(e){}renderWarehouse()}};
+  $('#c-split').onclick=()=>{const T=+$('#c-tot').value||0;const base=sizes.map(z=>({z,x:T*R.share[z]}));let u=0;base.forEach(i=>{i.n=Math.floor(i.x);u+=i.n});base.sort((a,b)=>(b.x-b.n)-(a.x-a.n));let r=T-u;for(const i of base){if(r<=0)break;i.n++;r--}base.forEach(i=>{$('#c-'+i.z).value=i.n})};
+  $('#c-get').onclick=()=>{const hits=find($('#c-m').value);if(!hits.length){$('#c-out').innerHTML='<p class="hint">ما لقيت الموديل.</p>';return}const m=hits[0].m;let any=0;sizes.forEach(z=>{const s=m.sizes.find(x=>x.size===z);const q=s?(s.stock['المستودع']||0):0;$('#c-'+z).value=q;any+=q});$('#c-out').innerHTML=`<p class="hint">${m.name} ${m.key}: بالمستودع ${fa(any)} قطعة من المقاسات الأساسية${m.cat!==RF?` — تنبيه: صنفه ${m.cat} والقاعدة المعروضة لـ${RF}`:''}.</p>`};
+  $('#c-go').onclick=()=>{
+    const q={};sizes.forEach(z=>{q[z]=Math.max(0,Math.floor(+$('#c-'+z).value||0))});QTY=q;
+    const res={};let left={};for(const z of sizes){const a=allocate(z,q[z],R,stores);res[z]=a.out;left[z]=a.left}
+    let t=`<table class="rt"><tr><th>الفرع</th>${sizes.map(z=>`<th>${z}</th>`).join('')}<th>المجموع</th></tr>`;
+    let tot=0;
+    for(const b of stores){const s=sizes.reduce((a,z)=>a+res[z][b],0);if(!s)continue;tot+=s;t+=`<tr><td>${b}</td>${sizes.map(z=>`<td>${res[z][b]?`<b>${fa(res[z][b])}</b>`:'<span class="v-none">—</span>'}`).join('')}<td><b>${fa(s)}</b></td></tr>`}
+    const lt=sizes.reduce((a,z)=>a+left[z],0);
+    if(lt)t+=`<tr><td>يبقى بالمستودع</td>${sizes.map(z=>`<td>${left[z]?fa(left[z]):'—'}</td>`).join('')}<td><b>${fa(lt)}</b></td></tr>`;
+    t+=`</table><p class="hint" style="padding-block:6px">${fa(tot)} قطعة للفروع${lt?` و${fa(lt)} تبقى بالمستودع لأن ما فيه فرع يستقبل هذا المقاس الآن`:''}. الفروع الموقوفة على مقاس ما تأخذ منه شي، والفروع بين الحدّين قطعة واحدة.</p>`;
+    $('#c-out').innerHTML=t;
+  };
+}
+// ---- size moves between branches: this week's transfer order, from the branch that does not sell the size to the one that does
+let MVD='all', MVK='all', MVC='all';
+function renderMoves(){
+  const out=$('#mvv'); const mv=DATA.moves||[]; const kind=x=>x.src==='المستودع'?'wh':x.why.includes('احتياطي تيرا')?'tera':'br';
+  const K=[['br','بين الفروع'],['wh','من المستودع'],['tera','من احتياطي تيرا']];
+  const cnt=k=>{const s=mv.filter(x=>kind(x)===k);return {n:s.length,pcs:s.reduce((a,x)=>a+x.qty,0)}};
+  let h=`<div class="gh"><h2>تحريك المقاسات هذا الأسبوع${HERE?`: ${HERE}`:''}</h2><span class="lv">من الفرع اللي ما يبيع المقاس إلى الفرع اللي يبيعه، عشان يكتمل عنده</span></div>`;
+  h+=`<div class="tiles">${K.map(([k,l])=>{const c=cnt(k);return `<button type="button" data-mk="${k}" aria-pressed="${MVK===k}"><span class="tn">${l}</span><span class="tb">${fa(c.pcs)} <small style="font-size:12px;font-weight:400">قطعة</small></span><span class="ts">${fa(c.n)} سطر</span></button>`}).join('')}</div>`;
+  let sel=mv.filter(x=>MVK==='all'||kind(x)===MVK);
+  if(HERE){
+    const o=sel.filter(x=>x.src===HERE).reduce((a,x)=>a+x.qty,0), i=sel.filter(x=>x.dst===HERE).reduce((a,x)=>a+x.qty,0);
+    h+=`<div class="gfilter">${[['all',`الكل ${fa(o+i)}`],['out',`يطلع من ${HERE} ${fa(o)}`],['in',`يجي لـ${HERE} ${fa(i)}`]].map(([k,l])=>`<button type="button" data-md="${k}" aria-pressed="${MVD===k}">${l}</button>`).join('')}</div>`;
+    sel=sel.filter(x=>MVD==='out'?x.src===HERE:MVD==='in'?x.dst===HERE:(x.src===HERE||x.dst===HERE));
+  }else{
+    const by={}; DATA.locs.forEach(b=>by[b]={o:0,i:0}); sel.forEach(x=>{if(by[x.src])by[x.src].o+=x.qty;if(by[x.dst])by[x.dst].i+=x.qty});
+    h+=`<p class="hint" style="padding-block:4px">${DATA.locs.filter(b=>by[b].o||by[b].i).map(b=>`${b}: يطلع ${fa(by[b].o)} · يجي ${fa(by[b].i)}`).join(' — ')}<br>اضغط فرع فوق عشان تشوف اللي يطلع منه ويجيه.</p>`;
+  }
+  const cats={}; sel.forEach(x=>{cats[x.cat]=(cats[x.cat]||0)+x.qty});
+  h+=`<div class="gfilter">${[['all','كل الأصناف'],...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,q])=>[c,c+' '+fa(q)])].map(([k,l])=>`<button type="button" data-mc="${k}" aria-pressed="${MVC===k}">${l}</button>`).join('')}</div>`;
+  sel=sel.filter(x=>MVC==='all'||x.cat===MVC);
+  if(!sel.length)h+='<p class="hint">ما فيه تحريك في هذي الفئة.</p>';
+  let cur=null, curm=null;
+  for(const x of sel){
+    const rt=x.src+'→'+x.dst;
+    if(rt!==cur){ if(curm!==null)h+='</div>'; curm=null; cur=rt; const q=sel.filter(y=>y.src===x.src&&y.dst===x.dst).reduce((a,y)=>a+y.qty,0); h+=`<div class="route"><h3>من ${x.src} إلى ${x.dst}</h3><span>${fa(q)} قطعة</span></div>`; }
+    if(curm!==x.key){ if(curm!==null)h+='</div>'; curm=x.key; h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div><span class="pill p-new">${x.cat}</span></div>`; }
+    h+=`<div class="mv"><span class="sz"><b>${x.size==='—'?'بدون مقاس':'مقاس '+x.size}</b></span><span class="q">${fa(x.qty)}</span><span class="w">${x.why}</span></div>`;
+  }
+  if(curm!==null)h+='</div>';
+  out.innerHTML=h;
+  out.querySelectorAll('button[data-mk]').forEach(b=>b.onclick=()=>{MVK=MVK===b.dataset.mk?'all':b.dataset.mk;renderMoves()});
+  out.querySelectorAll('button[data-md]').forEach(b=>b.onclick=()=>{MVD=b.dataset.md;renderMoves()});
+  out.querySelectorAll('button[data-mc]').forEach(b=>b.onclick=()=>{MVC=b.dataset.mc;renderMoves()});
 }
 let VIEW='search';
-function setView(v){VIEW=v;$('#v-search').setAttribute('aria-pressed',v==='search');$('#v-models').setAttribute('aria-pressed',v==='models');$('#mv').hidden=v!=='models';$('#out').hidden=v!=='search';$('#f').hidden=v!=='search';$('#loc').hidden=v!=='search';if(v==='models')renderModels();try{localStorage.setItem('nv',v)}catch(e){}}
-$('#v-search').onclick=()=>setView('search');$('#v-models').onclick=()=>setView('models');
+function setView(v){VIEW=v;for(const k of ['search','models','moves'])$('#v-'+k).setAttribute('aria-pressed',v===k);$('#mv').hidden=v!=='models';$('#mvv').hidden=v!=='moves';$('#out').hidden=v!=='search';$('#f').hidden=v!=='search';$('#loc').hidden=v==='models';if(v==='models')renderModels();if(v==='moves')renderMoves();try{localStorage.setItem('nv',v)}catch(e){}}
+$('#v-search').onclick=()=>setView('search');$('#v-models').onclick=()=>setView('models');$('#v-moves').onclick=()=>setView('moves');
 const DECS=[['all','الكل'],['top','★ الأكثر مبيعاً'],['nosalla','مو على سلة'],['hidsalla','على سلة لكن مخفي'],['exit','يخرج من المصفوفة'],['zero','صفر مبيعات'],['pull','مسحوب للمصنع'],['over','متضخم: لا يُصنع'],['mfg','يُصنَّع'],['nomfg','بيّاع: لا يُصنع'],['new','جديد'],['cont','مستمر'],['unshown','لم يُعرض']];
 const dmatch={all:m=>true,top:m=>m.top>0,nosalla:m=>!m.salla&&act(m)&&(m.stock.total||0)>0,hidsalla:m=>m.salla==='مخفي'&&act(m)&&(m.stock.total||0)>0,exit:m=>m.dec==='يخرج من المصفوفة',zero:m=>m.sold===0&&m.dec==='يخرج من المصفوفة',pull:m=>m.status.startsWith('مسحوب'),over:m=>m.flag==='متضخم',mfg:m=>m.dec==='يُصنَّع',nomfg:m=>m.dec==='بيّاع: لا يُصنع',new:m=>m.dec==='جديد',cont:m=>m.dec==='مستمر',unshown:m=>m.dec==='لم يُعرض'};
 let MD='exit', MC='all', MN=50;
