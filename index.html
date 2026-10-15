@@ -204,6 +204,10 @@ const t=s=>LANG==='ur'?(UR[s]??s):s;
 const L=s=>LANG==='ur'?(LOC[s]??s):s;
 const tf=(k,v)=>{let s=t(k);for(const [a,b] of Object.entries(v))s=s.split('{'+a+'}').join(b);return s};
 const catsL=s=>t(s);
+let NMAP={};
+const NM=m=>LANG==='ur'&&m.name_ur?m.name_ur:m.name;          // model name as the reader's language shows it
+const NMK=(key,name)=>LANG==='ur'?(NMAP[key]||name):name;
+const ARN=name=>LANG==='ur'?` <span class="key">${name}</span>`:'';   // the Arabic name beside the code, to match the label
 const PILL={'نشط':'p-ok','جديد':'p-new','يخرج من المصفوفة':'p-warn','مسحوب: جودة':'p-bad','مسحوب: الإدارة':'p-bad'};
 const norm=t=>String(t||'').toLowerCase().replace(/[إأآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ً-ْ]/g,'').replace(/\s+/g,' ').trim();
 const fa=n=>Number(n).toLocaleString('ar-SA-u-nu-latn');
@@ -224,6 +228,7 @@ $('#foot').dataset.ar=$('#foot').textContent;
 async function load(){
   try{
     const r=await fetch('data.json',{cache:'no-store'}); DATA=await r.json();
+    DATA.models.forEach(m=>{NMAP[m.key]=m.name_ur||m.name});
     const loc=$('#loc');
     for(const l of [...DATA.locs.filter(l=>l!=='المستودع'),'المستودع']){ const b=document.createElement('button');b.type='button';b.textContent=L(l);b.dataset.l=l;b.setAttribute('aria-pressed','false');
       b.onclick=()=>{HERE=HERE===l?'':l;GF='all';GC='all';WB='all';WF='all';MVD='all';loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.l===HERE));if(VIEW==='moves')renderMoves();else render()};loc.appendChild(b)}
@@ -241,7 +246,7 @@ function find(q){
     if(hit.length)return hit.map(m=>({m,size:digits.length===13?digits.slice(-2):null}));
   }
   const words=q.split(' ');
-  return DATA.models.filter(m=>{const n=norm(m.name);return words.every(w=>n.includes(w))}).sort((a,b)=>b.sold-a.sold).slice(0,30).map(m=>({m,size:null}));
+  return DATA.models.filter(m=>{const n=norm(m.name)+' '+norm(m.name_ur||'');return words.every(w=>n.includes(w))}).sort((a,b)=>b.sold-a.sold).slice(0,30).map(m=>({m,size:null}));
 }
 function badges(m){
   let h='';
@@ -263,7 +268,7 @@ function render(){
   let h=`<p class="count">${fa(hits.length)} ${t('موديل')}</p>`;
   for(const {m,size} of hits){
     const pill=PILL[m.status]||'p-ok';
-    h+=`<div class="card"><div class="head"><div><span class="name">${m.name}</span> <span class="key">${m.key}</span></div><span class="pills"><span class="pill ${pill}">${t(m.status)}</span>${badges(m)}</span></div>
+    h+=`<div class="card"><div class="head"><div><span class="name">${NM(m)}</span> <span class="key">${m.key}</span>${ARN(m.name)}</div><span class="pills"><span class="pill ${pill}">${t(m.status)}</span>${badges(m)}</span></div>
     <div class="meta"><span>${t('السعر الحالي')} <b>${fa(m.sell)}</b></span>${m.new?`<span>${t('السعر الجديد من 1 نوفمبر')} <b>${fa(m.new)}</b></span>`:''}<span>${t('باع في')} ${fa(DATA.period||70)} ${t('يوم')} <b>${fa(m.sold)}</b></span></div><div class="sizes">`;
     const sizes=size?[...m.sizes.filter(z=>z.size===size),...m.sizes.filter(z=>z.size!==size)]:m.sizes;
     for(const z of sizes){
@@ -317,7 +322,7 @@ function renderWarehouse(){
   let cur=null;
   for(const {b,x,ord} of list){
     const id=b+'|'+x.key;
-    if(id!==cur){ if(cur!==null)h+='</div>'; cur=id; h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div><span class="pill p-new">${LANG==='ur'?L(b)+' '+t('لـ'):t('لـ')+L(b)}</span></div>`; }
+    if(id!==cur){ if(cur!==null)h+='</div>'; cur=id; h+=`<div class="card"><div class="head"><div><span class="name">${NMK(x.key,x.name)}</span> <span class="key">${x.key}</span>${ARN(x.name)}</div><span class="pill p-new">${LANG==='ur'?L(b)+' '+t('لـ'):t('لـ')+L(b)}</span></div>`; }
     h+=`<div class="gap"><span class="sz"><b>${sizeLbl(x.size)}</b></span><span class="sold">${t('بالمستودع')} ${fa(x.where['المستودع'])} · ${L(b)} ${t('باع')} ${fa(x.sold)} ${t('في')} ${fa(DATA.period||70)} ${t('يوم')}</span>${ord?`<span class="tag t-come">${t('في أمر التحويل:')} ${fa(ord)}</span>`:`<span class="tag t-ask">${t('موجود، يُطلب عند الحاجة')}</span>`}</div>`;
   }
   if(cur!==null)h+='</div>';
@@ -390,7 +395,7 @@ function renderRule(out,sub){
   $('#c-split').onclick=()=>{const T=+$('#c-tot').value||0;const base=sizes.map(z=>({z,x:T*R.share[z]}));let u=0;base.forEach(i=>{i.n=Math.floor(i.x);u+=i.n});base.sort((a,b)=>(b.x-b.n)-(a.x-a.n));let r=T-u;for(const i of base){if(r<=0)break;i.n++;r--}base.forEach(i=>{$('#c-'+i.z).value=i.n})};
   $('#c-get').onclick=()=>{const hits=find($('#c-m').value);if(!hits.length){$('#c-out').innerHTML=`<p class="hint">${t('ما لقيت الموديل.')}</p>`;return}const m=hits[0].m;let any=0;sizes.forEach(z=>{const s=m.sizes.find(x=>x.size===z);const q=s?(s.stock['المستودع']||0):0;$('#c-'+z).value=q;any+=q});
     const warn=m.cat!==RF?(LANG==='ur'?tf('_warn',{C:catsL(m.cat),F:catsL(RF)}):` — تنبيه: صنفه ${m.cat} والقاعدة المعروضة لـ${RF}`):'';
-    $('#c-out').innerHTML=`<p class="hint">${LANG==='ur'?tf('_got',{M:m.name+' '+m.key,N:fa(any)}):`${m.name} ${m.key}: بالمستودع ${fa(any)} قطعة من المقاسات الأساسية`}${warn}.</p>`};
+    $('#c-out').innerHTML=`<p class="hint">${LANG==='ur'?tf('_got',{M:NM(m)+' '+m.key,N:fa(any)}):`${m.name} ${m.key}: بالمستودع ${fa(any)} قطعة من المقاسات الأساسية`}${warn}.</p>`};
   $('#c-go').onclick=()=>{
     const q={};sizes.forEach(z=>{q[z]=Math.max(0,Math.floor(+$('#c-'+z).value||0))});QTY=q;
     const res={};let left={};for(const z of sizes){const a=allocate(z,q[z],R,stores);res[z]=a.out;left[z]=a.left}
@@ -430,7 +435,7 @@ function renderMoves(){
   for(const x of sel){
     const rt=x.src+'→'+x.dst;
     if(rt!==cur){ if(curm!==null)h+='</div>'; curm=null; cur=rt; const q=sel.filter(y=>y.src===x.src&&y.dst===x.dst).reduce((a,y)=>a+y.qty,0); h+=`<div class="route"><h3>${LANG==='ur'?`${L(x.src)} ← ${L(x.dst)}`:`من ${x.src} إلى ${x.dst}`}</h3><span>${fa(q)} ${t('قطعة')}</span></div>`; }
-    if(curm!==x.key){ if(curm!==null)h+='</div>'; curm=x.key; h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div><span class="pill p-new">${catsL(x.cat)}</span></div>`; }
+    if(curm!==x.key){ if(curm!==null)h+='</div>'; curm=x.key; h+=`<div class="card"><div class="head"><div><span class="name">${NMK(x.key,x.name)}</span> <span class="key">${x.key}</span>${ARN(x.name)}</div><span class="pill p-new">${catsL(x.cat)}</span></div>`; }
     h+=`<div class="mv"><span class="sz"><b>${sizeLbl(x.size)}</b></span><span class="q">${fa(x.qty)}</span><span class="w">${x.why}</span></div>`;
   }
   if(curm!==null)h+='</div>';
@@ -469,7 +474,7 @@ function renderModels(){
     if(m.flag)pills.push(`<span class="pill p-warn">${t(m.flag)}</span>`); if(m.line)pills.push(`<span class="pill p-new">${t('الخط اليومي')}</span>`); const bd=badges(m); if(bd)pills.push(bd);
     const szs=m.sizes.filter(z=>z.size!=='—'&&Object.values(z.stock).reduce((a,b)=>a+b,0)>0).map(z=>z.size);
     const sb=Object.entries(m.soldby).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([w,q])=>`${L(w)} ${fa(q)}`).join('، ');
-    h+=`<div class="mrow"><div class="head"><div><span class="name">${m.name}</span> <span class="key">${m.key}</span></div><span class="pills">${pills.join('')}</span></div>
+    h+=`<div class="mrow"><div class="head"><div><span class="name">${NM(m)}</span> <span class="key">${m.key}</span>${ARN(m.name)}</div><span class="pills">${pills.join('')}</span></div>
     <div class="l"><span>${t('باع')} <b>${fa(m.sold)}</b> ${t('في')} ${fa(m.eff||DATA.period)} ${t('يوم')}</span>${m.best?`<span>${t('أفضل فرع')} <b>${L(m.best)}</b></span>`:''}<span>${t('يبيع في')} <b>${fa(m.nsell)}</b> ${t('فروع')}</span>${sb?`<span>${sb}</span>`:''}</div>
     <div class="l"><span>${t('المخزون')} <b>${fa(st.total||0)}</b></span><span>${t('فروع')} ${fa(st.branches||0)}</span><span>${t('مستودع')} ${fa(st.main||0)}</span>${st.prod?`<span>${t('مصنع')} ${fa(st.prod)}</span>`:''}${st.transit?`<span>${t('في الطريق')} ${fa(st.transit)}</span>`:''}${m.cover!=null?`<span>${t('يكفي')} <b>${fa(m.cover)}</b> ${t('يوم')}</span>`:''}<span>${t('السعر')} ${fa(m.sell)}${m.new?` ← <b>${fa(m.new)}</b>`:''}</span>${szs.length?`<span>${t('المقاسات المتوفرة')} <b>${szs.join('، ')}</b></span>`:''}</div>
     ${m.why?`<div class="why">${m.why}</div>`:''}
@@ -500,7 +505,7 @@ function renderGaps(b){
   if(!list.length){h+=`<p class="hint">${t('ما فيه شي في هذي الفئة.')}</p>`;out.innerHTML=h;bindF(b);return}
   let cur=null;
   for(const x of list){
-    if(x.key!==cur){ if(cur!==null)h+='</div>'; cur=x.key; const m=DATA.models.find(m=>m.key===x.key); h+=`<div class="card"><div class="head"><div><span class="name">${x.name}</span> <span class="key">${x.key}</span></div>${m&&m.status==='جديد'?`<span class="pill p-new">${t('جديد')}</span>`:''}</div>`; }
+    if(x.key!==cur){ if(cur!==null)h+='</div>'; cur=x.key; const m=DATA.models.find(m=>m.key===x.key); h+=`<div class="card"><div class="head"><div><span class="name">${NMK(x.key,x.name)}</span> <span class="key">${x.key}</span>${ARN(x.name)}</div>${m&&m.status==='جديد'?`<span class="pill p-new">${t('جديد')}</span>`:''}</div>`; }
     const c=cls(x); let tag='';
     if(c==='come'){const parts=Object.entries(x.coming).map(([s,q])=>U?`${L(s)} ← ${fa(q)}`:`${fa(q)} من ${s}`); if(x.transit)parts.push(`${fa(x.transit)} ${t('في الطريق')}`); tag=`<span class="tag t-come">${t('جاي لك:')} ${parts.join('، ')}</span>`}
     else if(c==='ask'){const ws=Object.entries(x.where).sort((a,b)=>(b[0]==='المستودع')-(a[0]==='المستودع')||b[1]-a[1]).slice(0,4); tag=`<span class="tag ${wh(x)?'t-come':'t-ask'}">${wh(x)?t('يتعبّى من المستودع'):t('اطلبه من')}: ${ws.map(([w,q])=>`${L(w)} ${fa(q)}`).join('، ')}</span>`}
