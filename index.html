@@ -104,6 +104,8 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
 .mrow .l b{color:var(--fg);font-weight:600}
 .mrow .why{font-size:13px}
 .more{display:block;margin:14px auto 0;font:inherit;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:8px;padding:8px 18px;cursor:pointer}
+.accb{margin-top:8px;border-top:1px solid var(--line,#444);padding-top:6px}
+.lnk.acc{text-decoration:none;font-weight:600}
 .lnk{font:inherit;font-size:12px;border:none;background:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
 .foot{color:var(--muted);font-size:12px;margin-top:28px;line-height:1.7}
 .sub{display:flex;gap:6px;margin:10px 0 2px}
@@ -194,7 +196,7 @@ const UR={
 'يطلع من':'نکلے گا:','يجي لـ':'آئے گا:','يطلع':'نکلے گا','يجي':'آئے گا','اضغط فرع فوق عشان تشوف اللي يطلع منه ويجيه.':'اوپر برانچ دبائیں تاکہ دیکھیں کیا نکلے گا اور کیا آئے گا۔','كل الأصناف':'تمام زمرے','ما فيه تحريك في هذي الفئة.':'اس زمرے میں کوئی منتقلی نہیں۔','من':'','إلى':'←',
 'مو على سلة (للتصوير)':'سلہ پر نہیں (فوٹو کے لیے)','على سلة لكن مخفي':'سلہ پر مگر چھپا ہوا','يخرج من المصفوفة':'لائن سے خارج','صفر مبيعات':'صفر فروخت','أوتليت (مسحوب)':'آؤٹ لیٹ (واپس لیا گیا)','أوتليت · غير مضمونة':'آؤٹ لیٹ · کوئی گارنٹی نہیں','سعر الأوتليت (من الآن)':'آؤٹ لیٹ قیمت (ابھی سے)','متضخم: لا يُصنع':'اوور اسٹاک: نہیں بنے گا','يُصنَّع':'بنے گا','بيّاع: لا يُصنع':'بکتا ہے: نہیں بنے گا','جديد':'نیا','مستمر':'جاری','لم يُعرض':'پیش نہیں ہوا',
 '_t_top':'فروخت کی مالیت میں ٹاپ 40 · {N} سلہ پر نہیں','_t_salla':'فعال · {B} پیس برانچز میں + {M} گودام میں','_t_exit':'{P} پیس · {R} فیکٹری واپس','صفر مبيعات في الفترة':'مدت میں صفر فروخت','_t_pull':'کوالٹی یا انتظامیہ · {P} پیس · جہاں ہیں وہیں بکیں گے','_t_over':'{P} پیس · 180 دن سے زیادہ کافی','يُصنَّع هذا الأسبوع':'اس ہفتے بنے گا','_t_mfg':'{M} پیس پروڈکشن آرڈر میں','بيّاع لكن لا يُصنع':'بکتا ہے مگر نہیں بنے گا','ناقص وهامشه أقل من المطلوب':'کم ہے اور منافع مطلوبہ سے کم','_t_new':'دو تنخواہوں کے بعد فیصلہ · {P} پیس','_t_cont':'{P} پیس کمپنی میں','تفصيل حسب الطلب':'آرڈر پر سلائی','عند فروع تبيعه':'بیچنے والی برانچز کے پاس','عند فروع تبيعه، ما يتسحب':'بیچنے والی برانچز کے پاس ہے، نہیں لیا جائے گا','ما فيه':'موجود نہیں','آخر حبات':'آخری پیس','_t_last':'{P} پیس · جہاں ہیں وہیں بکیں، دوبارہ نہ منگوائیں، ختم ہونے پر حذف',
-'_count':'{N} ماڈل · {P} پیس · {B} برانچز میں اور {M} گودام میں','أفضل فرع':'بہترین برانچ','يبيع في':'بکتا ہے:','فروع':'برانچز','المخزون':'اسٹاک','مستودع':'گودام','مصنع':'فیکٹری','يكفي':'کافی','السعر':'قیمت','المقاسات المتوفرة':'دستیاب سائز','يرجع المصنع':'فیکٹری واپس','للمستودع':'گودام کو','أمر التصنيع:':'پروڈکشن آرڈر:','ناقص لكن موقوف:':'کم مگر رکا ہوا:','تفاصيل المقاسات والفروع':'سائز اور برانچز کی تفصیل','عرض المزيد':'مزید دکھائیں','الخط اليومي':'ڈیلی لائن',
+'_count':'{N} ماڈل · {P} پیس · {B} برانچز میں اور {M} گودام میں','أفضل فرع':'بہترین برانچ','يبيع في':'بکتا ہے:','فروع':'برانچز','المخزون':'اسٹاک','مستودع':'گودام','مصنع':'فیکٹری','يكفي':'کافی','السعر':'قیمت','المقاسات المتوفرة':'دستیاب سائز','يرجع المصنع':'فیکٹری واپس','للمستودع':'گودام کو','أمر التصنيع:':'پروڈکشن آرڈر:','ناقص لكن موقوف:':'کم مگر رکا ہوا:','تفاصيل المقاسات والفروع':'سائز اور برانچز کی تفصیل','إخفاء المقاسات':'سائز چھپائیں','عرض المزيد':'مزید دکھائیں','الخط اليومي':'ڈیلی لائن',
 'تصفية':'کلیئرنس','نشط':'فعال','مسحوب: جودة':'واپس: کوالٹی','مسحوب: الإدارة':'واپس: انتظامیہ','متضخم':'اوور اسٹاک',
 'عباية':'عبایہ','طقم':'سیٹ','نقاب':'نقاب','طرحة':'اسکارف','فستان':'ڈریس','خمار':'خمار','أخرى':'دیگر',
 'نواقص':'کی کمی:','هذا الأسبوع:':'اس ہفتے:','يتعبّى من المستودع الآن':'ابھی گودام سے بھرے گا','جاي لك':'آپ کو آ رہا','اطلبه من فرع':'برانچ سے منگوائیں','في التصنيع':'پروڈکشن میں','بعت':'آپ نے بیچے','جاي لك:':'آپ کو آ رہا:','يتعبّى من المستودع':'گودام سے بھرے گا','اطلبه من':'منگوائیں','في أمر التصنيع':'پروڈکشن آرڈر میں',
@@ -263,6 +265,23 @@ function badges(m){
 const ACTIVE=new Set(['مستمر','يُصنَّع','جديد','بيّاع: لا يُصنع']);
 const act=m=>(m.status==='نشط'||m.status==='جديد')&&ACTIVE.has(m.dec);
 const sizeLbl=z=>z==='—'?t('بدون مقاس'):t('مقاس')+' '+z;
+function sizesHTML(m,size){
+  let h='';
+    const sizes=size?[...m.sizes.filter(z=>z.size===size),...m.sizes.filter(z=>z.size!==size)]:m.sizes;
+  for(const z of sizes){
+    const tot=Object.values(z.stock).reduce((a,b)=>a+b,0);
+    const trt=Object.values(z.transit).reduce((a,b)=>a+b,0);
+    const hereQ=HERE?(z.stock[HERE]||0):null; const hereT=HERE?(z.transit[HERE]||0):0;
+    let chips='';
+    const order=[...DATA.locs].sort((a,b)=>(b===HERE)-(a===HERE));
+    for(const l of order){const n=z.stock[l];if(n)chips+=`<span class="chip${l===HERE?' here':''}">${L(l)} ${fa(n)}</span>`}
+    for(const l of order){const n=z.transit[l];if(n)chips+=`<span class="chip tr">${t('في الطريق لـ')}${L(l)} ${fa(n)}</span>`}
+    const sum=tot?`${fa(tot)} ${t('قطعة')}`+(trt?` + ${fa(trt)} ${t('في الطريق')}`:''):(trt?`${fa(trt)} ${t('في الطريق')}`:'');
+    const here=HERE?`<small>${hereQ?`${LANG==='ur'?L(HERE)+' '+t('عند'):t('عند')+' '+L(HERE)+':'} ${fa(hereQ)}`:hereT?`${LANG==='ur'?L(HERE)+' '+t('جاي لـ'):t('جاي لـ')+L(HERE)+':'} ${fa(hereT)}`:`${LANG==='ur'?L(HERE)+' '+t('ما عند'):t('ما عند')+' '+L(HERE)}`}</small>`:'';
+    h+=`<div class="size"${size&&z.size===size?' style="background:var(--accent-soft);border-radius:8px;padding:8px;border-top:none"':''}><div class="srow"><span class="sz">${sizeLbl(z.size)}${here}</span>${tot||trt?`<span class="tot">${sum}</span><span class="chips">${chips}</span>`:(z.mto?`<span class="none" style="color:var(--accent)">${t('تفصيل حسب الطلب')}</span>`:`<span class="none">${z.sold>0?t('بعناه'):t('ما فيه')}</span>`)}</div></div>`;
+  }
+  return h;
+}
 function render(){
   if(!DATA)return; const q=$('#q').value; try{localStorage.setItem('nq',q)}catch(e){}
   const hits=find(q); const out=$('#out');
@@ -273,19 +292,7 @@ function render(){
     const pill=PILL[m.status]||'p-ok';
     h+=`<div class="card"><div class="head"><div><span class="name">${NM(m)}</span> <span class="key">${m.key}</span>${ARN(m.name)}</div><span class="pills"><span class="pill ${pill}">${t(m.status)}</span>${badges(m)}</span></div>
     <div class="meta"><span>${t('السعر الحالي')} <b>${fa(m.sell)}</b></span>${m.new?`<span>${m.pgroup==='أوتليت'?t('سعر الأوتليت (من الآن)'):m.pgroup==='تصفية'?t('سعر التصفية من 18 أكتوبر'):t('السعر الجديد من 18 أكتوبر')} <b>${fa(m.new)}</b></span>`:''}<span>${t('باع في')} ${fa(DATA.period||70)} ${t('يوم')} <b>${fa(m.sold)}</b></span></div><div class="sizes">`;
-    const sizes=size?[...m.sizes.filter(z=>z.size===size),...m.sizes.filter(z=>z.size!==size)]:m.sizes;
-    for(const z of sizes){
-      const tot=Object.values(z.stock).reduce((a,b)=>a+b,0);
-      const trt=Object.values(z.transit).reduce((a,b)=>a+b,0);
-      const hereQ=HERE?(z.stock[HERE]||0):null; const hereT=HERE?(z.transit[HERE]||0):0;
-      let chips='';
-      const order=[...DATA.locs].sort((a,b)=>(b===HERE)-(a===HERE));
-      for(const l of order){const n=z.stock[l];if(n)chips+=`<span class="chip${l===HERE?' here':''}">${L(l)} ${fa(n)}</span>`}
-      for(const l of order){const n=z.transit[l];if(n)chips+=`<span class="chip tr">${t('في الطريق لـ')}${L(l)} ${fa(n)}</span>`}
-      const sum=tot?`${fa(tot)} ${t('قطعة')}`+(trt?` + ${fa(trt)} ${t('في الطريق')}`:''):(trt?`${fa(trt)} ${t('في الطريق')}`:'');
-      const here=HERE?`<small>${hereQ?`${LANG==='ur'?L(HERE)+' '+t('عند'):t('عند')+' '+L(HERE)+':'} ${fa(hereQ)}`:hereT?`${LANG==='ur'?L(HERE)+' '+t('جاي لـ'):t('جاي لـ')+L(HERE)+':'} ${fa(hereT)}`:`${LANG==='ur'?L(HERE)+' '+t('ما عند'):t('ما عند')+' '+L(HERE)}`}</small>`:'';
-      h+=`<div class="size"${size&&z.size===size?' style="background:var(--accent-soft);border-radius:8px;padding:8px;border-top:none"':''}><div class="srow"><span class="sz">${sizeLbl(z.size)}${here}</span>${tot||trt?`<span class="tot">${sum}</span><span class="chips">${chips}</span>`:(z.mto?`<span class="none" style="color:var(--accent)">${t('تفصيل حسب الطلب')}</span>`:`<span class="none">${z.sold>0?t('بعناه'):t('ما فيه')}</span>`)}</div></div>`;
-    }
+    h+=sizesHTML(m,size);
     h+='</div></div>';
   }
   out.innerHTML=h;
@@ -484,12 +491,12 @@ function renderModels(){
     ${m.ret||m.towh?`<div class="l"><span class="tag t-none">${t('يرجع المصنع')} ${fa(m.ret)}</span>${m.towh?`<span class="tag t-ask">${t('للمستودع')} ${fa(m.towh)}</span>`:''}</div>`:''}
     ${Object.keys(m.mfg).length?`<div class="l"><span class="tag t-come">${t('أمر التصنيع:')} ${Object.entries(m.mfg).map(([z,q])=>`${z==='—'?'':z+'×'}${fa(q)}`).join('، ')}</span></div>`:''}
     ${Object.keys(m.mfgx).length?`<div class="l"><span class="tag t-mfg">${t('ناقص لكن موقوف:')} ${Object.entries(m.mfgx).map(([z,q])=>`${z==='—'?'':z+'×'}${fa(q)}`).join('، ')}</span></div>`:''}
-    <div><button type="button" class="lnk" data-k="${m.key}">${t('تفاصيل المقاسات والفروع')}</button></div></div>`;
+    <div><button type="button" class="lnk acc" data-k="${m.key}" aria-expanded="false">▾ ${t('تفاصيل المقاسات والفروع')}</button></div><div class="accb sizes" hidden></div></div>`;
   }
   if(sel.length>MN)h+=`<button type="button" class="more" id="more">${t('عرض المزيد')} (${fa(sel.length-MN)})</button>`;
   $('#mout').innerHTML=h;
   const mb=$('#more'); if(mb)mb.onclick=()=>{MN+=50;renderModels()};
-  $('#mout').querySelectorAll('.lnk').forEach(b=>b.onclick=()=>{$('#q').value=b.dataset.k;setView('search');render();window.scrollTo(0,0)});
+  $('#mout').querySelectorAll('.lnk.acc').forEach(b=>b.onclick=()=>{const box=b.parentElement.nextElementSibling;const open=box.hidden;if(open&&!box.dataset.done){const m=DATA.models.find(x=>x.key===b.dataset.k);box.innerHTML=sizesHTML(m,null);box.dataset.done=1}box.hidden=!open;b.setAttribute('aria-expanded',open);b.textContent=(open?'▴ ':'▾ ')+t(open?'إخفاء المقاسات':'تفاصيل المقاسات والفروع')});
 }
 $('#mq').addEventListener('input',()=>{clearTimeout(window._m);window._m=setTimeout(()=>{MN=50;renderModels()},250)});
 $('#ms').addEventListener('change',()=>renderModels());
