@@ -134,13 +134,14 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
 .mv{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;border-top:1px solid var(--line);padding-block:6px}
 .mv .q{font-weight:700;background:var(--here);color:var(--here-fg);border-radius:6px;padding:1px 9px;white-space:nowrap}
 .mv .w{font-size:12px;color:var(--muted)}
+table.opt{width:100%;border-collapse:collapse;font-size:15px}table.opt th,table.opt td{padding:6px 8px;border-bottom:1px solid var(--line,#ddd);text-align:start}table.opt td:not(:first-child),table.opt th:not(:first-child){text-align:center;white-space:nowrap}#optv details{margin:6px 0}#optv summary{cursor:pointer;padding:8px 0;font-weight:600}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="hrow"><h1 id="h1">بحث مخزون نواعم</h1><div class="lang" id="lang"><button type="button" data-lg="ar" aria-pressed="true">عربي</button><button type="button" data-lg="ur" aria-pressed="false">اردو</button></div></div>
-    <div class="nav" role="tablist"><button type="button" id="v-search" aria-pressed="true">بحث والفروع</button><button type="button" id="v-models" aria-pressed="false">الموديلات والقرارات</button><button type="button" id="v-moves" aria-pressed="false">تحريك المقاسات</button></div>
+    <div class="nav" role="tablist"><button type="button" id="v-search" aria-pressed="true">بحث والفروع</button><button type="button" id="v-models" aria-pressed="false">الموديلات والقرارات</button><button type="button" id="v-moves" aria-pressed="false">تحريك المقاسات</button><button type="button" id="v-opt" aria-pressed="false">الخطة المحسّنة</button></div>
     <p class="asof" id="asof" style="color:var(--bad);font-weight:700">هذي معاينة بس. اضغط زر المشاركة (المربع والسهم) واختر «فتح في Safari» أو «Chrome» عشان يشتغل البحث.</p>
     <form class="search" id="f">
       <input id="q" type="search" inputmode="search" placeholder="الباركود أو اسم الموديل" autocomplete="off" autofocus>
@@ -156,6 +157,7 @@ h1{font-size:20px;margin:0 0 2px;color:var(--accent)}
     <div id="mout"></div>
   </div>
   <div id="mvv" hidden></div>
+  <div id="optv" hidden></div>
   <div id="out"><p class="hint" id="hint0">اكتب الباركود كامل (مثل 011015-389554) أو جزء من الاسم (مثل الفيروز). أو اختر فرعك بدون كتابة عشان تشوف نواقصه.</p></div>
   <p class="foot" id="foot">الأرقام من آخر تقرير مخزون مُحمّل في النظام، والفرع يتأكد من الرف قبل تأكيد الطلب. «في الطريق» = خرج بتحويل وما انستلم بعد. الموديل المسحوب أوتليت «غير مضمونة»: يُباع في مكانه وعلى سلة بسعر الأوتليت. «نواقص الفرع» = مقاسات باعها الفرع في الفترة وما عنده منها الآن. «اطلبه من» يطلع بس المستودع وتيرا والفرع اللي ما باع الموديل، والفرع اللي يبيع الموديل ما يتسحب منه: «عند فروع تبيعه» للعلم بس. قرارات الموديلات من المحرك: يخرج من المصفوفة = ما يبيع قطعة في الشهر في أي فرع، متضخم = مخزونه يكفي أكثر من 180 يوم. «بعناه» = انباع منه في الفترة وما بقي منه قطعة لا في الفروع ولا في المستودع، و«ما فيه» = المقاس ما انباع منه ولا عندنا منه شي (ما نزل أو ما وصل)، والمقاس اللي خلص من الشركة كلها ما يطلع في النواقص: الموديل اللي يخلص ننتهي منه. «تفصيل حسب الطلب» = مقاس 60: ما ينصنع للمخزون، يتفصّل لما تطلبه الزبونة. «آخر حبات» = باقي منه 5 قطع أو أقل في الشركة كلها وما يتصنّع: يُباع مكانه، ما ينطلب ولا يتعبّى، ولما يخلص ينحذف. «★ الأكثر مبيعاً» = ضمن أعلى 40 موديل بقيمة المبيعات في الفترة في كل الشركة، و«★ أونلاين» = ضمن أعلى 20 في المتجر الإلكتروني. «على سلة» من آخر تصدير لمنتجات سلة: معروض أو مخفي، و«مو على سلة» = ما له صفحة في المتجر ويحتاج تصوير وإضافة. «تحريك المقاسات» = أمر التحويل هذا الأسبوع: الفرع اللي ما باع الموديل أو عنده من المقاس أكثر من حاجته يعطيه للفرع اللي يبيعه. «تجربة» = موديل شغّال ما وصل الفرع قبل: يجيه قطعة من كل مقاس من القطع الراجعة للمستودع أو من رصيد المستودع، ويُحكم عليه بعد ما يمر عليه راتبين: باع يتعبّى، ما باع يطلع. «جديد» = ما مر عليه راتبين وهو على الرف (الراتب يوم 27، والحكم بعد أسبوع الراتب الثاني): ما ينحكم عليه، ولا ينسحب من الفرع لأنه ما باع. «قاعدة توزيع المقاسات» عند المستودع: الفرع يستقبل المقاس حسب مبيعاته من هذا المقاس ومخزونه منه.</p>
 </div>
@@ -236,7 +238,7 @@ async function load(){
       b.onclick=()=>{HERE=HERE===l?'':l;GF='all';GC='all';WB='all';WF='all';MVD='all';loc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.l===HERE));if(VIEW==='moves')renderMoves();else render()};loc.appendChild(b)}
     applyLang();
     try{const q=localStorage.getItem('nq');if(q)$('#q').value=q}catch(e){}
-    render(); try{const v=localStorage.getItem('nv');if(v==='models'||v==='moves')setView(v)}catch(e){}
+    render(); try{const v=localStorage.getItem('nv');if(v==='models'||v==='moves'||v==='opt')setView(v)}catch(e){}
   }catch(e){$('#asof').textContent=t('تعذّر تحميل البيانات. أعد فتح الرابط.')}
 }
 function find(q){
@@ -455,7 +457,19 @@ function renderMoves(){
   out.querySelectorAll('button[data-mc]').forEach(b=>b.onclick=()=>{MVC=b.dataset.mc;renderMoves()});
 }
 let VIEW='search';
-function setView(v){VIEW=v;for(const k of ['search','models','moves'])$('#v-'+k).setAttribute('aria-pressed',v===k);$('#mv').hidden=v!=='models';$('#mvv').hidden=v!=='moves';$('#out').hidden=v!=='search';$('#f').hidden=v!=='search';$('#loc').hidden=v==='models';if(v==='models')renderModels();if(v==='moves')renderMoves();try{localStorage.setItem('nv',v)}catch(e){}}
+function setView(v){VIEW=v;for(const k of ['search','models','moves','opt'])$('#v-'+k).setAttribute('aria-pressed',v===k);$('#mv').hidden=v!=='models';$('#mvv').hidden=v!=='moves';$('#optv').hidden=v!=='opt';$('#out').hidden=v!=='search';$('#f').hidden=v!=='search';$('#loc').hidden=v==='models'||v==='opt';if(v==='models')renderModels();if(v==='moves')renderMoves();if(v==='opt')renderOpt();try{localStorage.setItem('nv',v)}catch(e){}}
+function renderOpt(){const O=DATA&&DATA.opt,box=$('#optv');if(!O){box.innerHTML=`<p class="hint">${t('الخطة المحسّنة ما انحسبت لهالتحديث.')}</p>`;return}
+  const S=O.summary,esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let h=`<p class="hint">${t('نموذج رياضي واحد يحسب التصنيع والتوزيع من المستودع مع بعض، بحدود طاقة المصنع والمخمل وطلعة المستودع. خيار ثاني جنب الخطة الحالية.')}</p>`;
+  h+=`<div class="l"><span class="tag t-come">${t('تصنيع')}: ${fa(S.opt_make)} ${t('قطعة')} (${t('الحالية')} ${fa(S.eng_make)})</span><span class="tag t-ask">${t('من المستودع للفروع')}: ${fa(S.opt_send)} (${t('الحالية')} ${fa(S.eng_send)})</span><span class="tag t-mfg">${t('مخمل')}: ${fa(S.velvet_pcs)}</span></div>`;
+  h+=`<h3 style="margin:18px 0 8px">${t('التصنيع')}</h3><table class="opt"><tr><th>${t('الموديل')}</th><th>52</th><th>54</th><th>56</th><th>58</th><th>${t('المجموع')}</th></tr>`;
+  const mk=[...O.make].sort((a,b)=>Object.values(b.sizes).reduce((x,y)=>x+y,0)-Object.values(a.sizes).reduce((x,y)=>x+y,0));
+  for(const m of mk){const z=m.sizes,tot=Object.values(z).reduce((x,y)=>x+y,0);h+=`<tr><td>${esc(m.name)}</td>${['52','54','56','58'].map(k=>`<td>${z[k]?fa(z[k]):''}</td>`).join('')}<td><b>${fa(tot)}</b></td></tr>`}
+  h+=`</table><h3 style="margin:18px 0 8px">${t('من المستودع للفروع')}</h3>`;
+  const by={};for(const r of O.send)(by[r.to]=by[r.to]||[]).push(r);
+  for(const [w,rs] of Object.entries(by).sort((a,b)=>b[1].length-a[1].length)){h+=`<details><summary>${L(w)} · ${fa(rs.reduce((a,r)=>a+r.qty,0))} ${t('قطعة')}</summary><table class="opt">${rs.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.size}</td><td><b>${fa(r.qty)}</b></td></tr>`).join('')}</table></details>`}
+  box.innerHTML=h}
+$('#v-opt').onclick=()=>setView('opt');
 $('#v-search').onclick=()=>setView('search');$('#v-models').onclick=()=>setView('models');$('#v-moves').onclick=()=>setView('moves');
 const DECS=[['all','الكل'],['top','★ الأكثر مبيعاً'],['last','آخر حبات'],['nosalla','مو على سلة'],['hidsalla','على سلة لكن مخفي'],['exit','يخرج من المصفوفة'],['zero','صفر مبيعات'],['pull','أوتليت (مسحوب)'],['over','متضخم: لا يُصنع'],['mfg','يُصنَّع'],['nomfg','بيّاع: لا يُصنع'],['new','جديد'],['cont','مستمر'],['unshown','لم يُعرض']];
 const dmatch={all:m=>true,top:m=>m.top>0,last:m=>!!m.last,nosalla:m=>!m.salla&&act(m)&&(m.stock.total||0)>0,hidsalla:m=>m.salla==='مخفي'&&act(m)&&(m.stock.total||0)>0,exit:m=>m.dec==='يخرج من المصفوفة',zero:m=>m.sold===0&&m.dec==='يخرج من المصفوفة',pull:m=>m.status.startsWith('مسحوب'),over:m=>m.flag==='متضخم',mfg:m=>m.dec==='يُصنَّع',nomfg:m=>m.dec==='بيّاع: لا يُصنع',new:m=>m.dec==='جديد',cont:m=>m.dec==='مستمر',unshown:m=>m.dec==='لم يُعرض'};
